@@ -1,0 +1,39 @@
+
+import time
+import random
+from prometheus_client import start_http_server, Counter, Gauge
+
+PII_LEAK_COUNTER = Counter('api_pipeline_pii_leak_total', 'Total clear-text PII attributes intercepted')
+MODEL_DRIFT_GAUGE = Gauge('api_pipeline_model_drift_psi', 'Current Population Stability Index drift metric')
+CIRCUIT_BREAKER_STATUS = Gauge('api_gateway_circuit_breaker_active', '1 = Fallback Active, 0 = Normal')
+
+def execute_api_audit_cycle(cycle_id):
+    print(f"\n [PIPELINE AUDIT] Processing RAG Ingestion Cycle #{cycle_id}...")
+    if cycle_id % 3 == 0:
+        PII_LEAK_COUNTER.inc()
+        print("LINEAGE FAILURE: Clear-text PII detected in outbound API payload packet!")
+    else:
+        print("Lineage Check: Outbound payload successfully scrubbed.")
+
+    if cycle_id < 6:
+        current_drift = round(random.uniform(0.04, 0.12), 2)
+    else:
+        current_drift = round(random.uniform(0.23, 0.45), 2)
+        
+    MODEL_DRIFT_GAUGE.set(current_drift)
+    print(f"📉 Telemetry Monitor: Current Model Drift (PSI Value) = {current_drift}")
+    
+    if current_drift > 0.20:
+        print("THRESHOLD BREACH (PSI > 0.20): Activating Automated Circuit Breaker!")
+        CIRCUIT_BREAKER_STATUS.set(1)
+    else:
+        CIRCUIT_BREAKER_STATUS.set(0)
+
+if __name__ == '__main__':
+    start_http_server(8000)
+    print("TECHNICAL AI AUDIT SANDBOX STATION ACTIVE on http://localhost:8000")
+    cycle = 1
+    while True:
+        execute_api_audit_cycle(cycle)
+        cycle += 1
+        time.sleep(3)

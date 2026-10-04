@@ -118,26 +118,5 @@ if __name__ == '__main__':
     *   I created a fresh dashboard panel, toggled the interface from Builder mode directly to **Code Mode**, and input my precise metric parameters: `api_pipeline_model_drift_psi` and `api_pipeline_pii_leak_total`.
     *   Finally, I shifted the baseline timeframe dropdown window filter from *Last 6 hours* down to **Last 5 minutes**. This successfully forced the Grafana panel to render my live, active Python data stream into high-resolution, multi-colored operational line charts.
   
-[  1. Ingestion Phase ]
-  Customer asks a question -> Chatbot pulls raw transaction data from Snowflake/BigQuery.
-       │
-       ▼
-[ 2. Data Lineage & PII Control Node ]
-  System scans the outbound text payload block for clear-text PII (e.g., "@" symbol).
-       ├──► [ Breach Found (Cycle % 3 == 0) ] ──► Increments "api_pipeline_pii_leak_total" in Prometheus database.
-       └──► [ Clean Data ]
-       │
-       ▼
-[ 3. Model Telemetry & Drift Monitoring ]
-  Pipeline continuously calculates the Population Stability Index (PSI) to measure data decay.
-       │
-       ▼
-[ 4. Automated Infrastructure Constraint (The Circuit Breaker) ]
-  Is the calculated model drift metric higher than the acceptable threshold (PSI > 0.20)?
-       ├──► [ YES ] ──► Sets status to "1" ──► Drops external LLM API route -> Services local safe fallback.
-       └──► [ NO ]  ──► Sets status to "0" ──► Routes data normally via external API (OpenAI/Gemini/Claude).
-       │
-       ▼
-[ 5. Visual Control Tower Tower ]
-  Grafana pulls numeric timelines from Prometheus and displays live updates on a 5-minute window chart.
+
 
